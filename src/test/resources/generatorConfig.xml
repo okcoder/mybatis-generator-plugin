@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+	<context id="DB2Tables">
+		<plugin type="org.okcoder.mybatis.generator.plugin.InsertOrUpdatePlugin"></plugin>
+		<plugin type="org.okcoder.mybatis.generator.plugin.UpdateByPrimaryKeyIncludesPlugin"></plugin>
+ 		<commentGenerator>
+			<property name="suppressDate" value="false" />
+		</commentGenerator>
+
+		<jdbcConnection driverClass="org.h2.Driver"
+			connectionURL="jdbc:h2:mem:;INIT=RUNSCRIPT FROM './src/test/resources/schema.sql'"
+			userId="sa" password="">
+		</jdbcConnection>
+
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+			<property name="useJSR310Types" value="true"/>
+		</javaTypeResolver>
+
+		<javaModelGenerator
+			targetPackage="org.okcoder.mybatis_generator_plugin_test.domain.entity"
+			targetProject="./src/test/java">
+			<property name="enableSubPackages" value="false" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+
+		<sqlMapGenerator
+			targetPackage="org.okcoder.mybatis_generator_plugin_test.domain.repository"
+			targetProject="./src/test/resources">
+			<property name="enableSubPackages" value="false" />
+		</sqlMapGenerator>
+
+		<javaClientGenerator type="XMLMAPPER"
+			targetPackage="org.okcoder.mybatis_generator_plugin_test.domain.repository"
+			targetProject="./src/test/java">
+			<property name="enableSubPackages" value="false" />
+		</javaClientGenerator>
+		<table tableName="%" schema="public"></table>
+	</context>
+</generatorConfiguration>
