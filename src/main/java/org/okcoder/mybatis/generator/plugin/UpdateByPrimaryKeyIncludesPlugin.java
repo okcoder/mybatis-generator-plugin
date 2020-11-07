@@ -28,11 +28,11 @@ public class UpdateByPrimaryKeyIncludesPlugin extends PluginAdapter {
 		if (!Utils.generateUpdateByPrimaryKey(introspectedTable)) {
 			return;
 		}
-		Method updateByPrimaryKeyIncludes = new Method(ori.getName().concat("Includes")); //$NON-NLS-1$
-		context.getCommentGenerator().addGeneralMethodAnnotation(updateByPrimaryKeyIncludes, introspectedTable,
+		Method newMethod = new Method(ori.getName().concat("Includes")); //$NON-NLS-1$
+		context.getCommentGenerator().addGeneralMethodAnnotation(newMethod, introspectedTable,
 				interfaze.getImportedTypes());
-		updateByPrimaryKeyIncludes.setDefault(true);
-		updateByPrimaryKeyIncludes.addParameter(ori.getParameters().get(0)); // $NON-NLS-1$
+		newMethod.setDefault(true);
+		newMethod.addParameter(ori.getParameters().get(0)); // $NON-NLS-1$
 		FullyQualifiedJavaType type = new FullyQualifiedJavaType("org.mybatis.dynamic.sql.SqlColumn");
 		type.addTypeArgument(new FullyQualifiedJavaType("?"));
 		Parameter includes = new Parameter(type, "includes", true);
@@ -40,19 +40,19 @@ public class UpdateByPrimaryKeyIncludesPlugin extends PluginAdapter {
 		interfaze.addImportedType(new FullyQualifiedJavaType("java.util.Set"));
 		interfaze.addImportedType(new FullyQualifiedJavaType("java.util.HashSet"));
 		interfaze.addImportedType(new FullyQualifiedJavaType("java.util.Arrays"));
-		updateByPrimaryKeyIncludes.addParameter(includes);
-		updateByPrimaryKeyIncludes.setReturnType(ori.getReturnType().get());
-		updateByPrimaryKeyIncludes.setDefault(true);
-		updateByPrimaryKeyIncludes.addBodyLine("return update(c -> {");
-		updateByPrimaryKeyIncludes.addBodyLine("Set<SqlColumn<?>> columns = new HashSet<>(Arrays.asList(includes));");
+		newMethod.addParameter(includes);
+		newMethod.setReturnType(ori.getReturnType().get());
+		newMethod.setDefault(true);
+		newMethod.addBodyLine("return update(c -> {");
+		newMethod.addBodyLine("Set<SqlColumn<?>> columns = new HashSet<>(Arrays.asList(includes));");
 		introspectedTable.getNonPrimaryKeyColumns().forEach(column -> {
 			String fieldName = AbstractMethodGenerator.calculateFieldName("", column);
 			String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
 					column.getFullyQualifiedJavaType());
 
-			updateByPrimaryKeyIncludes.addBodyLine("if (columns.contains(" + fieldName + ")) {");
-			updateByPrimaryKeyIncludes.addBodyLine("c.set(" + fieldName + ").equalTo(record::" + methodName + ");");
-			updateByPrimaryKeyIncludes.addBodyLine("}");
+			newMethod.addBodyLine("if (columns.contains(" + fieldName + ")) {");
+			newMethod.addBodyLine("c.set(" + fieldName + ").equalTo(record::" + methodName + ");");
+			newMethod.addBodyLine("}");
 		});
 
 		String prefix = "c.where(";
@@ -60,14 +60,14 @@ public class UpdateByPrimaryKeyIncludesPlugin extends PluginAdapter {
 			String fieldName = AbstractMethodGenerator.calculateFieldName("", column);
 			String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
 					column.getFullyQualifiedJavaType());
-			updateByPrimaryKeyIncludes.addBodyLine(prefix + fieldName + ", isEqualTo(record::" + methodName + "))");
+			newMethod.addBodyLine(prefix + fieldName + ", isEqualTo(record::" + methodName + "))");
 			prefix = ".and(";
 		}
-		updateByPrimaryKeyIncludes.addBodyLine(";");
+		newMethod.addBodyLine(";");
 
-		updateByPrimaryKeyIncludes.addBodyLine("return c;");
-		updateByPrimaryKeyIncludes.addBodyLine("});");
-		interfaze.addMethod(updateByPrimaryKeyIncludes);
+		newMethod.addBodyLine("return c;");
+		newMethod.addBodyLine("});");
+		interfaze.addMethod(newMethod);
 
 	}
 
