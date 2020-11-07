@@ -6,32 +6,32 @@ import javax.annotation.Generated;
 import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;
 
-public final class SpendInfoDynamicSqlSupport {
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
+public final class SpendInfoNames {
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2020-11-07T16:23:31.056511+09:00", comments="Source Table: PUBLIC.SPEND_INFO")
     public static final SpendInfo spendInfo = new SpendInfo();
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source field: PUBLIC.SPEND_INFO.SPEND_TYPE_ID")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2020-11-07T16:23:31.057065+09:00", comments="Source field: PUBLIC.SPEND_INFO.SPEND_TYPE_ID")
     public static final SqlColumn<String> spendTypeId = spendInfo.spendTypeId;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source field: PUBLIC.SPEND_INFO.GOODS_TYPE_ID")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2020-11-07T16:23:31.057688+09:00", comments="Source field: PUBLIC.SPEND_INFO.GOODS_TYPE_ID")
     public static final SqlColumn<String> goodsTypeId = spendInfo.goodsTypeId;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source field: PUBLIC.SPEND_INFO.SPEND_TYPE_NAME")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2020-11-07T16:23:31.057868+09:00", comments="Source field: PUBLIC.SPEND_INFO.SPEND_TYPE_NAME")
     public static final SqlColumn<String> spendTypeName = spendInfo.spendTypeName;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source field: PUBLIC.SPEND_INFO.GOODS_TYPE_NAME")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2020-11-07T16:23:31.058027+09:00", comments="Source field: PUBLIC.SPEND_INFO.GOODS_TYPE_NAME")
     public static final SqlColumn<String> goodsTypeName = spendInfo.goodsTypeName;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source field: PUBLIC.SPEND_INFO.VERSION")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2020-11-07T16:23:31.058176+09:00", comments="Source field: PUBLIC.SPEND_INFO.VERSION")
     public static final SqlColumn<Long> version = spendInfo.version;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source field: PUBLIC.SPEND_INFO.CREATE_TIME")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2020-11-07T16:23:31.058358+09:00", comments="Source field: PUBLIC.SPEND_INFO.CREATE_TIME")
     public static final SqlColumn<LocalDateTime> createTime = spendInfo.createTime;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source field: PUBLIC.SPEND_INFO.UPDATE_TIME")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2020-11-07T16:23:31.058635+09:00", comments="Source field: PUBLIC.SPEND_INFO.UPDATE_TIME")
     public static final SqlColumn<LocalDateTime> updateTime = spendInfo.updateTime;
 
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", date="2020-11-07T16:23:31.05682+09:00", comments="Source Table: PUBLIC.SPEND_INFO")
     public static final class SpendInfo extends SqlTable {
         public final SqlColumn<String> spendTypeId = column("SPEND_TYPE_ID", JDBCType.CHAR);
 

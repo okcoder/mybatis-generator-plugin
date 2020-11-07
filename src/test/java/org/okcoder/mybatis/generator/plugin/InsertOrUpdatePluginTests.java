@@ -27,6 +27,7 @@ public class InsertOrUpdatePluginTests {
 		spendInfo.setGoodsTypeId("ST1");
 		spendInfo.setSpendTypeName("spendTypeName1");
 		spendInfo.setGoodsTypeName("GoodsTypeName1");
+		spendInfo.setVersion(0L);
 		spendInfo.setCreateTime(LocalDateTime.now().plusYears(-1).truncatedTo(ChronoUnit.SECONDS));
 		mapper.insertOrUpdate(spendInfo);
 
