@@ -228,7 +228,7 @@ public interface SpendInfoMapper {
         int count = update(c ->
             c.set(spendTypeName).equalTo(record::getSpendTypeName)
             .set(goodsTypeName).equalTo(record::getGoodsTypeName)
-            .set(version).equalTo(record.getVersion() + 1)
+            .set(version).equalTo(record.getVersion() - 1)
             .set(createTime).equalTo(record::getCreateTime)
             .set(updateTime).equalTo(record::getUpdateTime)
             .where(spendTypeId, isEqualTo(record::getSpendTypeId))
@@ -251,7 +251,7 @@ public interface SpendInfoMapper {
             if (columns.contains(goodsTypeName)) {
                 c.set(goodsTypeName).equalTo(record::getGoodsTypeName);
             }
-            c.set(version).equalTo(record.getVersion() + 1);
+            c.set(version).equalTo(record.getVersion() - 1);
             if (columns.contains(createTime)) {
                 c.set(createTime).equalTo(record::getCreateTime);
             }

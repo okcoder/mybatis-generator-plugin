@@ -13,11 +13,11 @@
 		</plugin>
 		<plugin type="org.okcoder.mybatis.generator.plugin.UpdateByPrimaryKeyOptimisticLockingPlugin">
 			<property name="columnName" value="VERSION"/>
-			<property name="newVersionValue" value="default"/>
+			<property name="currentVersionValue" value="default"/>
 		</plugin>
 		<plugin type="org.okcoder.mybatis.generator.plugin.UpdateByPrimaryKeyIncludesOptimisticLockingPlugin">
 			<property name="columnName" value="VERSION"/>
-			<property name="newVersionValue" value="default"/>
+			<property name="currentVersionValue" value="default"/>
 		</plugin>
 		<plugin type="org.okcoder.mybatis.generator.plugin.InsertOrUpdatePlugin"></plugin>
 		<plugin type="org.okcoder.mybatis.generator.plugin.UpdateByPrimaryKeyIncludesPlugin"></plugin>

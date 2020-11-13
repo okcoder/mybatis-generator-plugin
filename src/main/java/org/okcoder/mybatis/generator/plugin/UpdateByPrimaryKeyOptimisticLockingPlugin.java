@@ -30,7 +30,7 @@ public class UpdateByPrimaryKeyOptimisticLockingPlugin extends PluginAdapter {
 		}
 
 		String versionColumnName = this.getProperties().getOrDefault("columnName", "VERSION").toString();
-		String newVersionMethod = this.getProperties().getOrDefault("newVersionMethod", "default").toString();
+		String currentVersionMethod = this.getProperties().getOrDefault("currentVersionMethod", "default").toString();
 
 		IntrospectedColumn versionColumn = introspectedTable.getBaseColumns().stream()
 				.filter(c -> c.getActualColumnName().equalsIgnoreCase(versionColumnName))//
@@ -57,12 +57,12 @@ public class UpdateByPrimaryKeyOptimisticLockingPlugin extends PluginAdapter {
 			String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
 					column.getFullyQualifiedJavaType());
 			if (column.equals(versionColumn)) {
-				if (newVersionMethod.equalsIgnoreCase("default")) {
+				if (currentVersionMethod.equalsIgnoreCase("default")) {
 					// record.getVersion()+1
-					methodName = "record."+methodName+"() + 1";
+					methodName = "record."+methodName+"() - 1";
 				} else {
-					// record.getNewVersion
-					methodName = "record::"+newVersionMethod;
+					// record.getcurrentVersion
+					methodName = "record::"+currentVersionMethod;
 				}
 			} else {
 				// record.getVersion
