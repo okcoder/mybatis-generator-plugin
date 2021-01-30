@@ -23,7 +23,8 @@ public class UpdateByPrimaryKeyIncludesOptimisticLockingPlugin extends PluginAda
 		return super.clientUpdateByPrimaryKeyWithBLOBsMethodGenerated(method, interfaze, introspectedTable);
 	}
 
-	private void updateByPrimaryKeyVersionIncludes(Method ori, Interface interfaze, IntrospectedTable introspectedTable) {
+	private void updateByPrimaryKeyVersionIncludes(Method ori, Interface interfaze,
+			IntrospectedTable introspectedTable) {
 
 		if (!Utils.generateUpdateByPrimaryKey(introspectedTable)) {
 			return;
@@ -61,23 +62,9 @@ public class UpdateByPrimaryKeyIncludesOptimisticLockingPlugin extends PluginAda
 			String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
 					column.getFullyQualifiedJavaType());
 
-			if (!column.equals(versionColumn)) {
-				newMethod.addBodyLine("if (columns.contains(" + fieldName + ")) {");
-				// record.getVersion
-				methodName = "record::"+methodName;
-			}else {
-				if (currentVersionMethod.equalsIgnoreCase("default")) {
-					// record.getVersion()+1
-					methodName = "record."+methodName+"() - 1";
-				} else {
-					// record.getcurrentVersion
-					methodName = "record::"+currentVersionMethod;
-				}
-			}
-			newMethod.addBodyLine("c.set(" + fieldName + ").equalTo(" + methodName + ");");
-			if (!column.equals(versionColumn)) {
-				newMethod.addBodyLine("}");
-			}
+			newMethod.addBodyLine("if (columns.contains(" + fieldName + ")) {");
+			newMethod.addBodyLine("c.set(" + fieldName + ").equalTo(record::" + methodName + ");");
+			newMethod.addBodyLine("}");
 		});
 
 		String prefix = "c.where(";
@@ -92,7 +79,14 @@ public class UpdateByPrimaryKeyIncludesOptimisticLockingPlugin extends PluginAda
 			String fieldName = AbstractMethodGenerator.calculateFieldName("", versionColumn);
 			String methodName = JavaBeansUtil.getGetterMethodName(versionColumn.getJavaProperty(),
 					versionColumn.getFullyQualifiedJavaType());
-			newMethod.addBodyLine(prefix + fieldName + ", isEqualTo(record::" + methodName + "));");
+			if (currentVersionMethod.equalsIgnoreCase("default")) {
+				// record.getVersion()+1
+				methodName = "record." + methodName + "() - 1";
+			} else {
+				// record.getcurrentVersion
+				methodName = "record::" + currentVersionMethod;
+			}
+			newMethod.addBodyLine(prefix + fieldName + ", isEqualTo(" + methodName + "));");
 		}
 
 		newMethod.addBodyLine("return c;");

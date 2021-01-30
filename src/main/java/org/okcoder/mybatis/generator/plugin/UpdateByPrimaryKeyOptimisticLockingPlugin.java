@@ -56,19 +56,7 @@ public class UpdateByPrimaryKeyOptimisticLockingPlugin extends PluginAdapter {
 			String fieldName = AbstractMethodGenerator.calculateFieldName("", column);
 			String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
 					column.getFullyQualifiedJavaType());
-			if (column.equals(versionColumn)) {
-				if (currentVersionMethod.equalsIgnoreCase("default")) {
-					// record.getVersion()+1
-					methodName = "record."+methodName+"() - 1";
-				} else {
-					// record.getcurrentVersion
-					methodName = "record::"+currentVersionMethod;
-				}
-			} else {
-				// record.getVersion
-				methodName = "record::"+methodName;
-			}
-			newMethod.addBodyLine(prefix + fieldName + ").equalTo(" + methodName + ")");
+			newMethod.addBodyLine(prefix + fieldName + ").equalTo(record::" + methodName + ")");
 			prefix = "    .set(";
 		}
 
@@ -84,7 +72,14 @@ public class UpdateByPrimaryKeyOptimisticLockingPlugin extends PluginAdapter {
 			String fieldName = AbstractMethodGenerator.calculateFieldName("", versionColumn);
 			String methodName = JavaBeansUtil.getGetterMethodName(versionColumn.getJavaProperty(),
 					versionColumn.getFullyQualifiedJavaType());
-			newMethod.addBodyLine(prefix + fieldName + ", isEqualTo(record::" + methodName + "))");
+			if (currentVersionMethod.equalsIgnoreCase("default")) {
+				// record.getVersion()+1
+				methodName = "record."+methodName+"() - 1";
+			} else {
+				// record.getcurrentVersion
+				methodName = "record::"+currentVersionMethod;
+			}
+			newMethod.addBodyLine(prefix + fieldName + ", isEqualTo(" + methodName + "))");
 		}
 		newMethod.addBodyLine(");");
 		newMethod.addBodyLine("if (count == 0){");

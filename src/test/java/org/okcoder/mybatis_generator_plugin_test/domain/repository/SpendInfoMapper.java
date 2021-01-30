@@ -251,7 +251,9 @@ public interface SpendInfoMapper {
             if (columns.contains(goodsTypeName)) {
                 c.set(goodsTypeName).equalTo(record::getGoodsTypeName);
             }
-            c.set(version).equalTo(record.getVersion() - 1);
+            if (columns.contains(version)) {
+                c.set(version).equalTo(record::getVersion);
+            }
             if (columns.contains(createTime)) {
                 c.set(createTime).equalTo(record::getCreateTime);
             }
@@ -260,7 +262,7 @@ public interface SpendInfoMapper {
             }
             c.where(spendTypeId, isEqualTo(record::getSpendTypeId))
             .and(goodsTypeId, isEqualTo(record::getGoodsTypeId))
-            .and(version, isEqualTo(record::getVersion));
+            .and(version, isEqualTo(record.getVersion() - 1));
             return c;
         });
         if (count == 0){
