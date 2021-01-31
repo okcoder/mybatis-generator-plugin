@@ -20,11 +20,15 @@ import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.dynamic.sql.BasicColumn;
+import org.mybatis.dynamic.sql.SqlBuilder;
 import org.mybatis.dynamic.sql.SqlColumn;
+import org.mybatis.dynamic.sql.SqlTable;
 import org.mybatis.dynamic.sql.delete.DeleteDSLCompleter;
 import org.mybatis.dynamic.sql.delete.render.DeleteStatementProvider;
+import org.mybatis.dynamic.sql.insert.render.InsertSelectStatementProvider;
 import org.mybatis.dynamic.sql.insert.render.InsertStatementProvider;
 import org.mybatis.dynamic.sql.insert.render.MultiRowInsertStatementProvider;
+import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.mybatis.dynamic.sql.select.CountDSLCompleter;
 import org.mybatis.dynamic.sql.select.SelectDSLCompleter;
 import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
@@ -34,6 +38,7 @@ import org.mybatis.dynamic.sql.update.UpdateModel;
 import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
+import org.mybatis.dynamic.sql.where.WhereApplier;
 import org.okcoder.mybatis_generator_plugin_test.domain.entity.SpendInfo;
 import org.springframework.dao.OptimisticLockingFailureException;
 
@@ -119,6 +124,33 @@ public interface SpendInfoMapper {
         } else {
             return this.insert(record);
         }
+    }
+
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
+    @InsertProvider(type = SqlProviderAdapter.class, method = "insertSelect")
+    int insertSelect(InsertSelectStatementProvider insertSelectStatement);
+
+    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
+    default int insertHistory(String spendTypeId_, String goodsTypeId_) {
+        WhereApplier where = dsl -> {
+            dsl.where(spendTypeId, isEqualTo(spendTypeId_));
+            if (spendTypeId_ != null) {
+                dsl.and(spendTypeId, isEqualTo(spendTypeId_));
+            }
+            return dsl;
+        };
+        
+        String historyTableName = "history.".concat(spendInfo.tableNameAtRuntime());
+        SqlTable historyTable = new SqlTable(historyTableName) {
+        };
+        SqlColumn<?>[] columnList = Arrays.stream(selectList).map(c -> (SqlColumn<?>) c).toArray(n -> new SqlColumn<?>[n]);
+        InsertSelectStatementProvider insertSelectStatement = SqlBuilder.insertInto(historyTable)
+                .withColumnList(columnList)
+                .withSelectStatement(SqlBuilder.select(columnList).from(spendInfo).applyWhere(where))
+                .build()
+                .render(RenderingStrategies.MYBATIS3);
+        
+        return insertSelect(insertSelectStatement);
     }
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
@@ -228,12 +260,12 @@ public interface SpendInfoMapper {
         int count = update(c ->
             c.set(spendTypeName).equalTo(record::getSpendTypeName)
             .set(goodsTypeName).equalTo(record::getGoodsTypeName)
-            .set(version).equalTo(record.getVersion() - 1)
+            .set(version).equalTo(record::getVersion)
             .set(createTime).equalTo(record::getCreateTime)
             .set(updateTime).equalTo(record::getUpdateTime)
             .where(spendTypeId, isEqualTo(record::getSpendTypeId))
             .and(goodsTypeId, isEqualTo(record::getGoodsTypeId))
-            .and(version, isEqualTo(record::getVersion))
+            .and(version, isEqualTo(record.getVersion() - 1))
         );
         if (count == 0){
             throw new OptimisticLockingFailureException("");

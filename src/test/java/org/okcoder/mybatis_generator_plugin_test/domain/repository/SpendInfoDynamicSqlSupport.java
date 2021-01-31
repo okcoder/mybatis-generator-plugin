@@ -48,7 +48,7 @@ public final class SpendInfoDynamicSqlSupport {
         public final SqlColumn<LocalDateTime> updateTime = column("UPDATE_TIME", JDBCType.TIMESTAMP);
 
         public SpendInfo() {
-            super("PUBLIC.SPEND_INFO");
+            super("SPEND_INFO");
         }
     }
 }

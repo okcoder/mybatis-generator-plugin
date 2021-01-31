@@ -21,6 +21,7 @@
 		</plugin>
 		<plugin type="org.okcoder.mybatis.generator.plugin.InsertOrUpdatePlugin"></plugin>
 		<plugin type="org.okcoder.mybatis.generator.plugin.UpdateByPrimaryKeyIncludesPlugin"></plugin>
+		<plugin type="org.okcoder.mybatis.generator.plugin.InsertHistoryPlugin"></plugin>
 		<plugin type="org.mybatis.generator.plugins.FluentBuilderMethodsPlugin"></plugin>
 		<plugin type="org.mybatis.generator.plugins.ToStringPlugin"></plugin>
 
@@ -56,6 +57,8 @@
 			targetProject="./src/test/java">
 			<property name="enableSubPackages" value="false" />
 		</javaClientGenerator>
-		<table tableName="%" schema="public"></table>
+		<table tableName="%" schema="public">
+            <property name="ignoreQualifiersAtRuntime" value="true"/>
+		</table>
 	</context>
 </generatorConfiguration>
