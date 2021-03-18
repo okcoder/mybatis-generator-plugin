@@ -62,9 +62,14 @@ public class UpdateByPrimaryKeyIncludesOptimisticLockingPlugin extends PluginAda
 			String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
 					column.getFullyQualifiedJavaType());
 
-			newMethod.addBodyLine("if (columns.contains(" + fieldName + ")) {");
+			boolean isVersionColumn = fieldName.equals(versionColumn.getJavaProperty()); 
+			if (!isVersionColumn){
+				newMethod.addBodyLine("if (columns.contains(" + fieldName + ")) {");
+			}
 			newMethod.addBodyLine("c.set(" + fieldName + ").equalTo(record::" + methodName + ");");
-			newMethod.addBodyLine("}");
+			if (!isVersionColumn){
+				newMethod.addBodyLine("}");
+			}
 		});
 
 		String prefix = "c.where(";
