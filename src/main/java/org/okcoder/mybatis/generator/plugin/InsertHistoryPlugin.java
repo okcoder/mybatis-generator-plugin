@@ -56,7 +56,6 @@ public class InsertHistoryPlugin extends PluginAdapter {
             if (invoiceDtlId_ != null) {
                 dsl.and(invoiceDtlId, isEqualTo(invoiceDtlId_));
             }
-            return dsl;
         };
         */
 		
@@ -72,7 +71,6 @@ public class InsertHistoryPlugin extends PluginAdapter {
 				insertHistory.addBodyLine("}");
 			}
 		});
-		insertHistory.addBodyLine("return dsl;");
 		insertHistory.addBodyLine("};");
 		
 /*
@@ -92,6 +90,7 @@ public class InsertHistoryPlugin extends PluginAdapter {
 		interfaze.getImportedTypes().add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.SqlTable"));
 		interfaze.getImportedTypes().add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.SqlBuilder"));
 		interfaze.getImportedTypes().add(new FullyQualifiedJavaType("org.mybatis.dynamic.sql.render.RenderingStrategies"));
+		interfaze.getImportedTypes().add(new FullyQualifiedJavaType("org.apache.ibatis.annotations.InsertProvider"));
 		insertHistory.addBodyLine("");
 		insertHistory.addBodyLine(MessageFormat.format("String historyTableName = \"history.\".concat({0}.tableNameAtRuntime());",tableFieldName));
 		insertHistory.addBodyLine("SqlTable historyTable = new SqlTable(historyTableName) {");

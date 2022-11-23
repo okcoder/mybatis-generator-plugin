@@ -1,6 +1,6 @@
 package org.okcoder.mybatis_generator_plugin_test.domain.repository;
 
-import static org.mybatis.dynamic.sql.SqlBuilder.*;
+import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
 import static org.okcoder.mybatis_generator_plugin_test.domain.repository.SpendInfoDynamicSqlSupport.*;
 
 import java.util.Arrays;
@@ -10,24 +10,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Generated;
-import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.dynamic.sql.BasicColumn;
 import org.mybatis.dynamic.sql.SqlBuilder;
 import org.mybatis.dynamic.sql.SqlColumn;
 import org.mybatis.dynamic.sql.SqlTable;
 import org.mybatis.dynamic.sql.delete.DeleteDSLCompleter;
-import org.mybatis.dynamic.sql.delete.render.DeleteStatementProvider;
 import org.mybatis.dynamic.sql.insert.render.InsertSelectStatementProvider;
-import org.mybatis.dynamic.sql.insert.render.InsertStatementProvider;
-import org.mybatis.dynamic.sql.insert.render.MultiRowInsertStatementProvider;
 import org.mybatis.dynamic.sql.render.RenderingStrategies;
 import org.mybatis.dynamic.sql.select.CountDSLCompleter;
 import org.mybatis.dynamic.sql.select.SelectDSLCompleter;
@@ -35,38 +30,20 @@ import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
 import org.mybatis.dynamic.sql.update.UpdateDSL;
 import org.mybatis.dynamic.sql.update.UpdateDSLCompleter;
 import org.mybatis.dynamic.sql.update.UpdateModel;
-import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
 import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
+import org.mybatis.dynamic.sql.util.mybatis3.CommonCountMapper;
+import org.mybatis.dynamic.sql.util.mybatis3.CommonDeleteMapper;
+import org.mybatis.dynamic.sql.util.mybatis3.CommonInsertMapper;
+import org.mybatis.dynamic.sql.util.mybatis3.CommonUpdateMapper;
 import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 import org.mybatis.dynamic.sql.where.WhereApplier;
 import org.okcoder.mybatis_generator_plugin_test.domain.entity.SpendInfo;
 import org.springframework.dao.OptimisticLockingFailureException;
 
 @Mapper
-public interface SpendInfoMapper {
+public interface SpendInfoMapper extends CommonCountMapper, CommonDeleteMapper, CommonInsertMapper<SpendInfo>, CommonUpdateMapper {
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
     BasicColumn[] selectList = BasicColumn.columnList(spendTypeId, goodsTypeId, spendTypeName, goodsTypeName, version, createTime, updateTime);
-
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    long count(SelectStatementProvider selectStatement);
-
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    @DeleteProvider(type=SqlProviderAdapter.class, method="delete")
-    int delete(DeleteStatementProvider deleteStatement);
-
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    @InsertProvider(type=SqlProviderAdapter.class, method="insert")
-    int insert(InsertStatementProvider<SpendInfo> insertStatement);
-
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    @InsertProvider(type=SqlProviderAdapter.class, method="insertMultiple")
-    int insertMultiple(MultiRowInsertStatementProvider<SpendInfo> multipleInsertStatement);
-
-    @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    @SelectProvider(type=SqlProviderAdapter.class, method="select")
-    @ResultMap("SpendInfoResult")
-    Optional<SpendInfo> selectOne(SelectStatementProvider selectStatement);
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -82,8 +59,9 @@ public interface SpendInfoMapper {
     List<SpendInfo> selectMany(SelectStatementProvider selectStatement);
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    @UpdateProvider(type=SqlProviderAdapter.class, method="update")
-    int update(UpdateStatementProvider updateStatement);
+    @SelectProvider(type=SqlProviderAdapter.class, method="select")
+    @ResultMap("SpendInfoResult")
+    Optional<SpendInfo> selectOne(SelectStatementProvider selectStatement);
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
     default long count(CountDSLCompleter completer) {
@@ -117,12 +95,12 @@ public interface SpendInfoMapper {
     }
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    default int insertOrUpdate(SpendInfo record) {
-        int count = this.updateByPrimaryKey(record);
+    default int insertOrUpdate(SpendInfo row) {
+        int count = this.updateByPrimaryKey(row);
         if (count > 0) {
             return count;
         } else {
-            return this.insert(record);
+            return this.insert(row);
         }
     }
 
@@ -137,7 +115,6 @@ public interface SpendInfoMapper {
             if (spendTypeId_ != null) {
                 dsl.and(spendTypeId, isEqualTo(spendTypeId_));
             }
-            return dsl;
         };
         
         String historyTableName = "history.".concat(spendInfo.tableNameAtRuntime());
@@ -154,8 +131,8 @@ public interface SpendInfoMapper {
     }
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    default int insert(SpendInfo record) {
-        return MyBatis3Utils.insert(this::insert, record, spendInfo, c ->
+    default int insert(SpendInfo row) {
+        return MyBatis3Utils.insert(this::insert, row, spendInfo, c ->
             c.map(spendTypeId).toProperty("spendTypeId")
             .map(goodsTypeId).toProperty("goodsTypeId")
             .map(spendTypeName).toProperty("spendTypeName")
@@ -180,15 +157,15 @@ public interface SpendInfoMapper {
     }
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    default int insertSelective(SpendInfo record) {
-        return MyBatis3Utils.insert(this::insert, record, spendInfo, c ->
-            c.map(spendTypeId).toPropertyWhenPresent("spendTypeId", record::getSpendTypeId)
-            .map(goodsTypeId).toPropertyWhenPresent("goodsTypeId", record::getGoodsTypeId)
-            .map(spendTypeName).toPropertyWhenPresent("spendTypeName", record::getSpendTypeName)
-            .map(goodsTypeName).toPropertyWhenPresent("goodsTypeName", record::getGoodsTypeName)
-            .map(version).toPropertyWhenPresent("version", record::getVersion)
-            .map(createTime).toPropertyWhenPresent("createTime", record::getCreateTime)
-            .map(updateTime).toPropertyWhenPresent("updateTime", record::getUpdateTime)
+    default int insertSelective(SpendInfo row) {
+        return MyBatis3Utils.insert(this::insert, row, spendInfo, c ->
+            c.map(spendTypeId).toPropertyWhenPresent("spendTypeId", row::getSpendTypeId)
+            .map(goodsTypeId).toPropertyWhenPresent("goodsTypeId", row::getGoodsTypeId)
+            .map(spendTypeName).toPropertyWhenPresent("spendTypeName", row::getSpendTypeName)
+            .map(goodsTypeName).toPropertyWhenPresent("goodsTypeName", row::getGoodsTypeName)
+            .map(version).toPropertyWhenPresent("version", row::getVersion)
+            .map(createTime).toPropertyWhenPresent("createTime", row::getCreateTime)
+            .map(updateTime).toPropertyWhenPresent("updateTime", row::getUpdateTime)
         );
     }
 
@@ -234,38 +211,38 @@ public interface SpendInfoMapper {
     }
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    static UpdateDSL<UpdateModel> updateAllColumns(SpendInfo record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(spendTypeId).equalTo(record::getSpendTypeId)
-                .set(goodsTypeId).equalTo(record::getGoodsTypeId)
-                .set(spendTypeName).equalTo(record::getSpendTypeName)
-                .set(goodsTypeName).equalTo(record::getGoodsTypeName)
-                .set(version).equalTo(record::getVersion)
-                .set(createTime).equalTo(record::getCreateTime)
-                .set(updateTime).equalTo(record::getUpdateTime);
+    static UpdateDSL<UpdateModel> updateAllColumns(SpendInfo row, UpdateDSL<UpdateModel> dsl) {
+        return dsl.set(spendTypeId).equalTo(row::getSpendTypeId)
+                .set(goodsTypeId).equalTo(row::getGoodsTypeId)
+                .set(spendTypeName).equalTo(row::getSpendTypeName)
+                .set(goodsTypeName).equalTo(row::getGoodsTypeName)
+                .set(version).equalTo(row::getVersion)
+                .set(createTime).equalTo(row::getCreateTime)
+                .set(updateTime).equalTo(row::getUpdateTime);
     }
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    static UpdateDSL<UpdateModel> updateSelectiveColumns(SpendInfo record, UpdateDSL<UpdateModel> dsl) {
-        return dsl.set(spendTypeId).equalToWhenPresent(record::getSpendTypeId)
-                .set(goodsTypeId).equalToWhenPresent(record::getGoodsTypeId)
-                .set(spendTypeName).equalToWhenPresent(record::getSpendTypeName)
-                .set(goodsTypeName).equalToWhenPresent(record::getGoodsTypeName)
-                .set(version).equalToWhenPresent(record::getVersion)
-                .set(createTime).equalToWhenPresent(record::getCreateTime)
-                .set(updateTime).equalToWhenPresent(record::getUpdateTime);
+    static UpdateDSL<UpdateModel> updateSelectiveColumns(SpendInfo row, UpdateDSL<UpdateModel> dsl) {
+        return dsl.set(spendTypeId).equalToWhenPresent(row::getSpendTypeId)
+                .set(goodsTypeId).equalToWhenPresent(row::getGoodsTypeId)
+                .set(spendTypeName).equalToWhenPresent(row::getSpendTypeName)
+                .set(goodsTypeName).equalToWhenPresent(row::getGoodsTypeName)
+                .set(version).equalToWhenPresent(row::getVersion)
+                .set(createTime).equalToWhenPresent(row::getCreateTime)
+                .set(updateTime).equalToWhenPresent(row::getUpdateTime);
     }
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    default int updateByPrimaryKeyVersion(SpendInfo record) {
+    default int updateByPrimaryKeyVersion(SpendInfo row) {
         int count = update(c ->
-            c.set(spendTypeName).equalTo(record::getSpendTypeName)
-            .set(goodsTypeName).equalTo(record::getGoodsTypeName)
-            .set(version).equalTo(record::getVersion)
-            .set(createTime).equalTo(record::getCreateTime)
-            .set(updateTime).equalTo(record::getUpdateTime)
-            .where(spendTypeId, isEqualTo(record::getSpendTypeId))
-            .and(goodsTypeId, isEqualTo(record::getGoodsTypeId))
-            .and(version, isEqualTo(record.getVersion() - 1))
+            c.set(spendTypeName).equalTo(row::getSpendTypeName)
+            .set(goodsTypeName).equalTo(row::getGoodsTypeName)
+            .set(version).equalTo(row::getVersion)
+            .set(createTime).equalTo(row::getCreateTime)
+            .set(updateTime).equalTo(row::getUpdateTime)
+            .where(spendTypeId, isEqualTo(row::getSpendTypeId))
+            .and(goodsTypeId, isEqualTo(row::getGoodsTypeId))
+            .and(version, isEqualTo(row.getVersion() - 1))
         );
         if (count == 0){
             throw new OptimisticLockingFailureException("");
@@ -274,27 +251,25 @@ public interface SpendInfoMapper {
     }
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    default int updateByPrimaryKeyVersionIncludes(SpendInfo record, SqlColumn<?> ... includes) {
+    default int updateByPrimaryKeyVersionIncludes(SpendInfo row, SqlColumn<?> ... includes) {
         int count = update(c -> {
             Set<SqlColumn<?>> columns = new HashSet<>(Arrays.asList(includes));
             if (columns.contains(spendTypeName)) {
-                c.set(spendTypeName).equalTo(record::getSpendTypeName);
+                c.set(spendTypeName).equalTo(row::getSpendTypeName);
             }
             if (columns.contains(goodsTypeName)) {
-                c.set(goodsTypeName).equalTo(record::getGoodsTypeName);
+                c.set(goodsTypeName).equalTo(row::getGoodsTypeName);
             }
-            if (columns.contains(version)) {
-                c.set(version).equalTo(record::getVersion);
-            }
+            c.set(version).equalTo(row::getVersion);
             if (columns.contains(createTime)) {
-                c.set(createTime).equalTo(record::getCreateTime);
+                c.set(createTime).equalTo(row::getCreateTime);
             }
             if (columns.contains(updateTime)) {
-                c.set(updateTime).equalTo(record::getUpdateTime);
+                c.set(updateTime).equalTo(row::getUpdateTime);
             }
-            c.where(spendTypeId, isEqualTo(record::getSpendTypeId))
-            .and(goodsTypeId, isEqualTo(record::getGoodsTypeId))
-            .and(version, isEqualTo(record.getVersion() - 1));
+            c.where(spendTypeId, isEqualTo(row::getSpendTypeId))
+            .and(goodsTypeId, isEqualTo(row::getGoodsTypeId))
+            .and(version, isEqualTo(row.getVersion() - 1));
             return c;
         });
         if (count == 0){
@@ -304,54 +279,54 @@ public interface SpendInfoMapper {
     }
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    default int updateByPrimaryKeyIncludes(SpendInfo record, SqlColumn<?> ... includes) {
+    default int updateByPrimaryKeyIncludes(SpendInfo row, SqlColumn<?> ... includes) {
         return update(c -> {
             Set<SqlColumn<?>> columns = new HashSet<>(Arrays.asList(includes));
             if (columns.contains(spendTypeName)) {
-                c.set(spendTypeName).equalTo(record::getSpendTypeName);
+                c.set(spendTypeName).equalTo(row::getSpendTypeName);
             }
             if (columns.contains(goodsTypeName)) {
-                c.set(goodsTypeName).equalTo(record::getGoodsTypeName);
+                c.set(goodsTypeName).equalTo(row::getGoodsTypeName);
             }
             if (columns.contains(version)) {
-                c.set(version).equalTo(record::getVersion);
+                c.set(version).equalTo(row::getVersion);
             }
             if (columns.contains(createTime)) {
-                c.set(createTime).equalTo(record::getCreateTime);
+                c.set(createTime).equalTo(row::getCreateTime);
             }
             if (columns.contains(updateTime)) {
-                c.set(updateTime).equalTo(record::getUpdateTime);
+                c.set(updateTime).equalTo(row::getUpdateTime);
             }
-            c.where(spendTypeId, isEqualTo(record::getSpendTypeId))
-            .and(goodsTypeId, isEqualTo(record::getGoodsTypeId))
+            c.where(spendTypeId, isEqualTo(row::getSpendTypeId))
+            .and(goodsTypeId, isEqualTo(row::getGoodsTypeId))
             ;
             return c;
         });
     }
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    default int updateByPrimaryKey(SpendInfo record) {
+    default int updateByPrimaryKey(SpendInfo row) {
         return update(c ->
-            c.set(spendTypeName).equalTo(record::getSpendTypeName)
-            .set(goodsTypeName).equalTo(record::getGoodsTypeName)
-            .set(version).equalTo(record::getVersion)
-            .set(createTime).equalTo(record::getCreateTime)
-            .set(updateTime).equalTo(record::getUpdateTime)
-            .where(spendTypeId, isEqualTo(record::getSpendTypeId))
-            .and(goodsTypeId, isEqualTo(record::getGoodsTypeId))
+            c.set(spendTypeName).equalTo(row::getSpendTypeName)
+            .set(goodsTypeName).equalTo(row::getGoodsTypeName)
+            .set(version).equalTo(row::getVersion)
+            .set(createTime).equalTo(row::getCreateTime)
+            .set(updateTime).equalTo(row::getUpdateTime)
+            .where(spendTypeId, isEqualTo(row::getSpendTypeId))
+            .and(goodsTypeId, isEqualTo(row::getGoodsTypeId))
         );
     }
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    default int updateByPrimaryKeySelective(SpendInfo record) {
+    default int updateByPrimaryKeySelective(SpendInfo row) {
         return update(c ->
-            c.set(spendTypeName).equalToWhenPresent(record::getSpendTypeName)
-            .set(goodsTypeName).equalToWhenPresent(record::getGoodsTypeName)
-            .set(version).equalToWhenPresent(record::getVersion)
-            .set(createTime).equalToWhenPresent(record::getCreateTime)
-            .set(updateTime).equalToWhenPresent(record::getUpdateTime)
-            .where(spendTypeId, isEqualTo(record::getSpendTypeId))
-            .and(goodsTypeId, isEqualTo(record::getGoodsTypeId))
+            c.set(spendTypeName).equalToWhenPresent(row::getSpendTypeName)
+            .set(goodsTypeName).equalToWhenPresent(row::getGoodsTypeName)
+            .set(version).equalToWhenPresent(row::getVersion)
+            .set(createTime).equalToWhenPresent(row::getCreateTime)
+            .set(updateTime).equalToWhenPresent(row::getUpdateTime)
+            .where(spendTypeId, isEqualTo(row::getSpendTypeId))
+            .and(goodsTypeId, isEqualTo(row::getGoodsTypeId))
         );
     }
 }

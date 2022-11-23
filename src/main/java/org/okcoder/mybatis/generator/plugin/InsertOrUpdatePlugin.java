@@ -1,15 +1,15 @@
 package org.okcoder.mybatis.generator.plugin;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.logging.Log;
 import org.mybatis.generator.logging.LogFactory;
-import org.mybatis.generator.runtime.dynamic.sql.elements.v2.Utils;
+import org.mybatis.generator.runtime.dynamic.sql.elements.Utils;
+
+import java.util.List;
+import java.util.Objects;
 
 public class InsertOrUpdatePlugin extends PluginAdapter {
 
@@ -37,11 +37,12 @@ public class InsertOrUpdatePlugin extends PluginAdapter {
 		insertOrUpdate.addParameter(ori.getParameters().get(0)); // $NON-NLS-1$
 		insertOrUpdate.setReturnType(ori.getReturnType().get());
 		insertOrUpdate.setDefault(true);
-		insertOrUpdate.addBodyLine("int count = this.updateByPrimaryKey(record);");
+		String recordParamName= ori.getParameters().get(0).getName();
+		insertOrUpdate.addBodyLine("int count = this.updateByPrimaryKey("+recordParamName+");");
 		insertOrUpdate.addBodyLine("if (count > 0) {");
 		insertOrUpdate.addBodyLine("return count;");
 		insertOrUpdate.addBodyLine("} else {");
-		insertOrUpdate.addBodyLine("return this.insert(record);");
+		insertOrUpdate.addBodyLine("return this.insert("+recordParamName+");");
 		insertOrUpdate.addBodyLine("}");
 		interfaze.addMethod(insertOrUpdate);
 	}

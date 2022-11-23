@@ -1,8 +1,5 @@
 package org.okcoder.mybatis.generator.plugin;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
@@ -12,7 +9,10 @@ import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.internal.util.JavaBeansUtil;
 import org.mybatis.generator.runtime.dynamic.sql.elements.AbstractMethodGenerator;
-import org.mybatis.generator.runtime.dynamic.sql.elements.v2.Utils;
+import org.mybatis.generator.runtime.dynamic.sql.elements.Utils;
+
+import java.util.List;
+import java.util.Objects;
 
 public class UpdateByPrimaryKeyIncludesOptimisticLockingPlugin extends PluginAdapter {
 
@@ -30,8 +30,8 @@ public class UpdateByPrimaryKeyIncludesOptimisticLockingPlugin extends PluginAda
 			return;
 		}
 
-		String versionColumnName = this.getProperties().getOrDefault("columnName", "VERSION").toString();
-		String currentVersionMethod = this.getProperties().getOrDefault("currentVersionMethod", "default").toString();
+		String versionColumnName = this.properties.getOrDefault("columnName", "VERSION").toString();
+		String currentVersionMethod = this.properties.getOrDefault("currentVersionMethod", "default").toString();
 
 		IntrospectedColumn versionColumn = introspectedTable.getBaseColumns().stream()
 				.filter(c -> c.getActualColumnName().equalsIgnoreCase(versionColumnName))//
@@ -40,6 +40,8 @@ public class UpdateByPrimaryKeyIncludesOptimisticLockingPlugin extends PluginAda
 		if (versionColumn == null) {
 			return;
 		}
+
+		String recordParamName= ori.getParameters().get(0).getName();
 
 		Method newMethod = new Method(ori.getName().concat("VersionIncludes")); //$NON-NLS-1$
 		context.getCommentGenerator().addGeneralMethodAnnotation(newMethod, introspectedTable,
@@ -66,7 +68,7 @@ public class UpdateByPrimaryKeyIncludesOptimisticLockingPlugin extends PluginAda
 			if (!isVersionColumn){
 				newMethod.addBodyLine("if (columns.contains(" + fieldName + ")) {");
 			}
-			newMethod.addBodyLine("c.set(" + fieldName + ").equalTo(record::" + methodName + ");");
+			newMethod.addBodyLine("c.set(" + fieldName + ").equalTo("+recordParamName+"::" + methodName + ");");
 			if (!isVersionColumn){
 				newMethod.addBodyLine("}");
 			}
@@ -77,7 +79,7 @@ public class UpdateByPrimaryKeyIncludesOptimisticLockingPlugin extends PluginAda
 			String fieldName = AbstractMethodGenerator.calculateFieldName("", column);
 			String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
 					column.getFullyQualifiedJavaType());
-			newMethod.addBodyLine(prefix + fieldName + ", isEqualTo(record::" + methodName + "))");
+			newMethod.addBodyLine(prefix + fieldName + ", isEqualTo("+recordParamName+"::" + methodName + "))");
 			prefix = ".and(";
 		}
 		{
@@ -86,10 +88,10 @@ public class UpdateByPrimaryKeyIncludesOptimisticLockingPlugin extends PluginAda
 					versionColumn.getFullyQualifiedJavaType());
 			if (currentVersionMethod.equalsIgnoreCase("default")) {
 				// record.getVersion()+1
-				methodName = "record." + methodName + "() - 1";
+				methodName = recordParamName+"." + methodName + "() - 1";
 			} else {
 				// record.getcurrentVersion
-				methodName = "record::" + currentVersionMethod;
+				methodName = recordParamName+"::" + currentVersionMethod;
 			}
 			newMethod.addBodyLine(prefix + fieldName + ", isEqualTo(" + methodName + "));");
 		}

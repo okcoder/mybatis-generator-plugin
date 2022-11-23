@@ -12,7 +12,7 @@ import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.internal.util.JavaBeansUtil;
 import org.mybatis.generator.runtime.dynamic.sql.elements.AbstractMethodGenerator;
-import org.mybatis.generator.runtime.dynamic.sql.elements.v2.Utils;
+import org.mybatis.generator.runtime.dynamic.sql.elements.Utils;
 
 public class UpdateByPrimaryKeyIncludesPlugin extends PluginAdapter {
 
@@ -28,6 +28,9 @@ public class UpdateByPrimaryKeyIncludesPlugin extends PluginAdapter {
 		if (!Utils.generateUpdateByPrimaryKey(introspectedTable)) {
 			return;
 		}
+
+		String recordParamName= ori.getParameters().get(0).getName();
+
 		Method newMethod = new Method(ori.getName().concat("Includes")); //$NON-NLS-1$
 		context.getCommentGenerator().addGeneralMethodAnnotation(newMethod, introspectedTable,
 				interfaze.getImportedTypes());
@@ -51,7 +54,7 @@ public class UpdateByPrimaryKeyIncludesPlugin extends PluginAdapter {
 					column.getFullyQualifiedJavaType());
 
 			newMethod.addBodyLine("if (columns.contains(" + fieldName + ")) {");
-			newMethod.addBodyLine("c.set(" + fieldName + ").equalTo(record::" + methodName + ");");
+			newMethod.addBodyLine("c.set(" + fieldName + ").equalTo("+recordParamName+"::" + methodName + ");");
 			newMethod.addBodyLine("}");
 		});
 
@@ -60,7 +63,7 @@ public class UpdateByPrimaryKeyIncludesPlugin extends PluginAdapter {
 			String fieldName = AbstractMethodGenerator.calculateFieldName("", column);
 			String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
 					column.getFullyQualifiedJavaType());
-			newMethod.addBodyLine(prefix + fieldName + ", isEqualTo(record::" + methodName + "))");
+			newMethod.addBodyLine(prefix + fieldName + ", isEqualTo("+recordParamName+"::" + methodName + "))");
 			prefix = ".and(";
 		}
 		newMethod.addBodyLine(";");

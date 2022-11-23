@@ -11,7 +11,7 @@ import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.internal.util.JavaBeansUtil;
 import org.mybatis.generator.runtime.dynamic.sql.elements.AbstractMethodGenerator;
-import org.mybatis.generator.runtime.dynamic.sql.elements.v2.Utils;
+import org.mybatis.generator.runtime.dynamic.sql.elements.Utils;
 
 public class UpdateByPrimaryKeyOptimisticLockingPlugin extends PluginAdapter {
 
@@ -29,8 +29,8 @@ public class UpdateByPrimaryKeyOptimisticLockingPlugin extends PluginAdapter {
 			return;
 		}
 
-		String versionColumnName = this.getProperties().getOrDefault("columnName", "VERSION").toString();
-		String currentVersionMethod = this.getProperties().getOrDefault("currentVersionMethod", "default").toString();
+		String versionColumnName = this.properties.getOrDefault("columnName", "VERSION").toString();
+		String currentVersionMethod = this.properties.getOrDefault("currentVersionMethod", "default").toString();
 
 		IntrospectedColumn versionColumn = introspectedTable.getBaseColumns().stream()
 				.filter(c -> c.getActualColumnName().equalsIgnoreCase(versionColumnName))//
@@ -51,12 +51,14 @@ public class UpdateByPrimaryKeyOptimisticLockingPlugin extends PluginAdapter {
 
 		newMethod.addBodyLine("int count = update(c ->");
 
+		String recordParamName= ori.getParameters().get(0).getName();
+
 		String prefix = "    c.set(";
 		for (IntrospectedColumn column : introspectedTable.getNonPrimaryKeyColumns()) {
 			String fieldName = AbstractMethodGenerator.calculateFieldName("", column);
 			String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
 					column.getFullyQualifiedJavaType());
-			newMethod.addBodyLine(prefix + fieldName + ").equalTo(record::" + methodName + ")");
+			newMethod.addBodyLine(prefix + fieldName + ").equalTo("+recordParamName+"::" + methodName + ")");
 			prefix = "    .set(";
 		}
 
@@ -65,7 +67,7 @@ public class UpdateByPrimaryKeyOptimisticLockingPlugin extends PluginAdapter {
 			String fieldName = AbstractMethodGenerator.calculateFieldName("", column);
 			String methodName = JavaBeansUtil.getGetterMethodName(column.getJavaProperty(),
 					column.getFullyQualifiedJavaType());
-			newMethod.addBodyLine(prefix + fieldName + ", isEqualTo(record::" + methodName + "))");
+			newMethod.addBodyLine(prefix + fieldName + ", isEqualTo("+recordParamName+"::" + methodName + "))");
 			prefix = "    .and(";
 		}
 		{
@@ -74,10 +76,10 @@ public class UpdateByPrimaryKeyOptimisticLockingPlugin extends PluginAdapter {
 					versionColumn.getFullyQualifiedJavaType());
 			if (currentVersionMethod.equalsIgnoreCase("default")) {
 				// record.getVersion()+1
-				methodName = "record."+methodName+"() - 1";
+				methodName = recordParamName+"."+methodName+"() - 1";
 			} else {
 				// record.getcurrentVersion
-				methodName = "record::"+currentVersionMethod;
+				methodName = recordParamName+"::"+currentVersionMethod;
 			}
 			newMethod.addBodyLine(prefix + fieldName + ", isEqualTo(" + methodName + "))");
 		}

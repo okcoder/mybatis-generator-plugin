@@ -1,8 +1,5 @@
 package org.okcoder.mybatis.generator.plugin;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
@@ -11,7 +8,10 @@ import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.Parameter;
 import org.mybatis.generator.runtime.dynamic.sql.elements.AbstractMethodGenerator;
-import org.mybatis.generator.runtime.dynamic.sql.elements.v2.Utils;
+import org.mybatis.generator.runtime.dynamic.sql.elements.Utils;
+
+import java.util.List;
+import java.util.Objects;
 
 public class DeleteByPrimaryKeyOptimisticLockingPlugin extends PluginAdapter {
 
@@ -29,7 +29,7 @@ public class DeleteByPrimaryKeyOptimisticLockingPlugin extends PluginAdapter {
 			return;
 		}
 
-		String versionColumnName = this.getProperties().getOrDefault("columnName", "VERSION").toString();
+		String versionColumnName = this.properties.getOrDefault("columnName", "VERSION").toString();
 
 		IntrospectedColumn versionColumn = introspectedTable.getBaseColumns().stream()
 				.filter(c -> c.getActualColumnName().equalsIgnoreCase(versionColumnName))//

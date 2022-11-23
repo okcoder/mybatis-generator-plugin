@@ -3,8 +3,8 @@ package org.okcoder.mybatis_generator_plugin_test.domain.repository;
 import java.sql.JDBCType;
 import java.time.LocalDateTime;
 import javax.annotation.Generated;
+import org.mybatis.dynamic.sql.AliasableSqlTable;
 import org.mybatis.dynamic.sql.SqlColumn;
-import org.mybatis.dynamic.sql.SqlTable;
 
 public final class SpendInfoDynamicSqlSupport {
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
@@ -32,7 +32,7 @@ public final class SpendInfoDynamicSqlSupport {
     public static final SqlColumn<LocalDateTime> updateTime = spendInfo.updateTime;
 
     @Generated(value="org.mybatis.generator.api.MyBatisGenerator", comments="Source Table: PUBLIC.SPEND_INFO")
-    public static final class SpendInfo extends SqlTable {
+    public static final class SpendInfo extends AliasableSqlTable<SpendInfo> {
         public final SqlColumn<String> spendTypeId = column("SPEND_TYPE_ID", JDBCType.CHAR);
 
         public final SqlColumn<String> goodsTypeId = column("GOODS_TYPE_ID", JDBCType.CHAR);
@@ -48,7 +48,7 @@ public final class SpendInfoDynamicSqlSupport {
         public final SqlColumn<LocalDateTime> updateTime = column("UPDATE_TIME", JDBCType.TIMESTAMP);
 
         public SpendInfo() {
-            super("SPEND_INFO");
+            super("SPEND_INFO", SpendInfo::new);
         }
     }
 }
